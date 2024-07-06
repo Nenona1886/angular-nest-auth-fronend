@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environments';
 import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
 
-import { AuthStatus, CheckTokenResponse, LoginResponse, User } from '../interfaces';
+import { AuthStatus, CheckTokenResponse, LoginResponse, RegisterResponse, User } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +48,20 @@ export class AuthService {
         catchError( err => throwError( () => err.error.message ))
       );
   }
+
+  //metodo creado por sam
+  register( email: string, password: string, name: string): Observable<boolean> {
+
+    const url  = `${ this.baseUrl }/auth/register`;
+    const body = { email, password, name };
+
+    return this.http.post<RegisterResponse>( url, body )
+      .pipe(
+        map( ({ user, token }) => this.setAuthentication( user, token )),
+        catchError( err => throwError( () => err.error.message ))
+      );
+  }
+
 
   checkAuthStatus():Observable<boolean> {
 
